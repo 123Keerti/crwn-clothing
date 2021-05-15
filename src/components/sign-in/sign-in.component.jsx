@@ -1,65 +1,91 @@
 import React from 'react';
-import './sign-in.styles.scss';
+import { connect } from 'react-redux';
+
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
-import { auth, signInWithGoogle } from '../../firebase/firebase.utils';
 
-class SignIn extends React.Component{
-    constructor(props) {
-        super(props);
+import {
+  googleSignInStart,
+  emailSignInStart
+} from '../../redux/user/user.actions';
 
-        this.state = {
-            email:'',
-            password:''
-        }
-    }
+import {
+  SignInContainer,
+  SignInTitle,
+  ButtonsBarContainer
+} from './sign-in.styles';
 
-        handleSubmit = async event => {
-            event.preventDefault();
+class SignIn extends React.Component {
+  constructor(props) {
+    super(props);
 
-            const { email, password } = this.state;
-            try{
-                await auth.signInWithEmailAndPassword(email, password);
-                this.setState({ email:'', password:'' })
-            }catch(error){
-                console.log(error);
+    this.state = {
+      email: '',
+      password: ''
+    };
+  }
 
-            }
-      };
-        handleChange = event =>{
-            const   { value, name  }= event.target;
+  handleSubmit = async event => {
+    event.preventDefault();
+    const { emailSignInStart } = this.props;
+    const { email, password } = this.state;
 
-            this.setState({ [name]:value })
-        }
-    
+    emailSignInStart(email, password);
+  };
 
-    render() {
-        return(
-            <div className='sign-in'>
-                <h2>I already have an Account</h2>
-                <span> Sign in with your email and passsword </span>
+  handleChange = event => {
+    const { value, name } = event.target;
 
-                <form onSubmit={this.handleSubmit}>
-                    <FormInput name="email" type="email" value={this.state.email}  handleChange={this.handleChange}  label='email'   required />
-                    
-                    <FormInput name="password" type="password" 
-                    value={this.state.password} handleChange={this.handleChange} label='password' required />
+    this.setState({ [name]: value });
+  };
 
-                    <div className='buttons'>
-                    <CustomButton type='button'> Sign In </CustomButton>
-                    <CustomButton onClick={ signInWithGoogle } isGoogleSignIn> 
-                    Sign-In with Google </CustomButton>
-                    </div>
-                    
+  render() {
+    const { googleSignInStart } = this.props;
+    return (
+      <SignInContainer>
+        <SignInTitle>I already have an account</SignInTitle>
+        <span>Sign in with your email and password</span>
 
-                    
-                </form>
-
-
-            </div>
-        );
-    }
+        <form onSubmit={this.handleSubmit}>
+          <FormInput
+            name='email'
+            type='email'
+            handleChange={this.handleChange}
+            value={this.state.email}
+            label='email'
+            required
+          />
+          <FormInput
+            name='password'
+            type='password'
+            value={this.state.password}
+            handleChange={this.handleChange}
+            label='password'
+            required
+          />
+          <ButtonsBarContainer>
+            <CustomButton type='submit'> Sign in </CustomButton>
+            <CustomButton
+              type='button'
+              onClick={googleSignInStart}
+              isGoogleSignIn
+            >
+              Sign in with Google
+            </CustomButton>
+          </ButtonsBarContainer>
+        </form>
+      </SignInContainer>
+    );
+  }
 }
 
-export default SignIn;
+const mapDispatchToProps = dispatch => ({
+  googleSignInStart: () => dispatch(googleSignInStart()),
+  emailSignInStart: (email, password) =>
+    dispatch(emailSignInStart({ email, password }))
+});
 
+export default connect(
+  null,
+  mapDispatchToProps
+)(SignIn);
