@@ -8,7 +8,7 @@ import CartDropdown from '../cart-dropdown/cart-dropdown.component';
 import { selectCartHidden } from '../../redux/cart/cart.selectors';
 //import { selectCurrentUser } from '../../redux/user/user.selectors';
 import {SelectCurrentUser} from '../../redux/user/user.selector';
-
+import { signOutStart } from '../../redux/user/user.actions';
 //import { ReactComponent as Logo } from '../../assets/crown.svg';
 import { ReactComponent as Logo } from '../../assests/crown.svg';
 
